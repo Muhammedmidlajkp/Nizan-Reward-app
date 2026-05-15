@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Nizan Makeovers · Bonus Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --pink: #c96fa8;
+  --pink-light: #fbeaf0;
+  --pink-mid: #f4c0d1;
+  --pink-dark: #993556;
+  --pink-darker: #72243e;
+  --text: #1a1a1a;
+  --muted: #888;
+  --border: #e8e8e8;
+  --surface: #f7f7f7;
+  --white: #ffffff;
+  --green: #639922;
+  --green-bg: #eaf3de;
+  --green-text: #3b6d11;
+  --amber: #ba7517;
+  --amber-bg: #faeeda;
+  --purple: #534ab7;
+  --purple-bg: #eeedfe;
+  --coral: #993c1d;
+  --coral-bg: #faece7;
+}
+
+html, body {
+  background: #e8e8e8;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 0 48px;
+}
+
+.phone {
+  width: 390px;
+  background: var(--white);
+  border-radius: 44px;
+  overflow: hidden;
+  border: 0.5px solid #d0d0d0;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.14), 0 0 0 8px rgba(255,255,255,0.7);
+  display: flex;
+  flex-direction: column;
+  min-height: 844px;
+}
+
+/* STATUS BAR */
+.statusbar { padding: 14px 24px 6px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.statusbar .time { font-size: 15px; font-weight: 700; color: var(--text); }
+.statusbar .icons { display: flex; gap: 5px; align-items: center; }
+
+/* SHARED HEADER */
+.page-hdr { display: flex; justify-content: space-between; align-items: center; padding: 4px 22px 12px; flex-shrink: 0; }
+.page-hdr-left .title { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+.page-hdr-left .subtitle { font-size: 12px; color: var(--pink); margin-top: 2px; }
+.bell { width: 38px; height: 38px; border-radius: 50%; background: var(--pink-light); border: 0.5px solid var(--pink-mid); display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; }
+.bell-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); position: absolute; top: 7px; right: 8px; border: 1.5px solid var(--pink-light); }
+
+/* CONTENT AREA */
+.content-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.content-area::-webkit-scrollbar { display: none; }
+
+/* PAGE VISIBILITY */
+.page { display: none; }
+.page.active { display: block; }
+
+/* BOTTOM NAV */
+.bottom-nav { background: var(--white); border-top: 0.5px solid var(--border); display: flex; padding: 6px 10px 22px; gap: 4px; flex-shrink: 0; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; padding: 8px 4px 6px; border-radius: 14px; transition: background 0.15s; }
+.nav-item.active { background: var(--pink-light); }
+.nav-label { font-size: 10px; color: var(--muted); font-weight: 400; }
+.nav-item.active .nav-label { color: var(--pink); font-weight: 600; }
+
+/* ── PORTFOLIO ── */
+.artist-sel-wrap { padding: 0 20px 10px; }
+.artist-sel { width: 100%; padding: 9px 14px; border: 0.5px solid var(--border); border-radius: 12px; font-size: 13px; color: var(--text); background: var(--surface); font-family: inherit; appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+.artist-row { display: flex; align-items: center; gap: 12px; padding: 2px 22px 14px; }
+.avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--pink-light); border: 1.5px solid var(--pink-mid); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--pink-darker); flex-shrink: 0; }
+.artist-info { flex: 1; }
+.artist-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.artist-role { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.tier-badge { padding: 5px 13px; border-radius: 20px; background: var(--pink-light); font-size: 11px; font-weight: 600; color: var(--pink-dark); border: 0.5px solid var(--pink-mid); white-space: nowrap; }
+.sum-card { margin: 0 18px; background: var(--white); border: 0.5px solid var(--border); border-radius: 16px; padding: 18px 20px 16px; }
+.sum-top { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.sum-col label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 5px; }
+.sum-amount { font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -0.8px; }
+.sum-divider { height: 0.5px; background: var(--border); margin-bottom: 12px; }
+.sum-bottom { display: flex; justify-content: space-between; align-items: center; }
+.sum-bottom > span { font-size: 11px; color: var(--muted); }
+.sum-right { display: flex; align-items: center; gap: 8px; }
+.sum-bonus { font-size: 15px; font-weight: 700; color: var(--pink); }
+.pct-pill { background: var(--green-bg); color: var(--green-text); font-size: 10px; font-weight: 700; padding: 4px 9px; border-radius: 20px; }
+.tabs-wrap { padding: 16px 22px 0; }
+.tabs { display: flex; border-bottom: 0.5px solid var(--border); margin-bottom: 14px; }
+.tab { font-size: 13px; color: var(--muted); padding: 8px 14px 10px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -0.5px; transition: color 0.15s; }
+.tab.active { color: var(--pink); border-bottom-color: var(--pink); font-weight: 600; }
+.pills { display: flex; gap: 8px; padding: 0 20px; margin-bottom: 14px; flex-wrap: wrap; }
+.pill { font-size: 11px; padding: 6px 14px; border-radius: 20px; cursor: pointer; border: 0.5px solid var(--border); background: var(--surface); color: var(--muted); transition: all 0.15s; font-family: inherit; }
+.pill.active { background: var(--pink-light); border-color: var(--pink-mid); color: var(--pink); }
+.bonus-cards { display: flex; flex-direction: column; gap: 10px; padding: 0 18px; }
+.bonus-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.12s; }
+.bonus-card:active { background: #efefef; }
+.icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.icon-box svg { width: 20px; height: 20px; }
+.bonus-mid { flex: 1; min-width: 0; }
+.bonus-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.bonus-desc { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.bonus-right { text-align: right; flex-shrink: 0; }
+.bonus-pct { font-size: 11px; color: var(--pink); font-weight: 500; }
+.bonus-amt { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 1px; }
+.status-tag { display: flex; align-items: center; gap: 4px; justify-content: flex-end; margin-top: 4px; }
+.sdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.slabel { font-size: 10px; color: var(--muted); }
+.expand-panel { background: var(--white); border: 0.5px solid var(--border); border-radius: 12px; padding: 11px 14px; margin-top: 8px; display: none; }
+.expand-panel.open { display: block; }
+.exp-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 0.5px solid #f2f2f2; }
+.exp-row:last-child { border-bottom: none; }
+.exp-key { font-size: 11px; color: var(--muted); }
+.exp-val { font-size: 12px; font-weight: 500; color: var(--text); }
+.redeem-wrap { padding: 16px 18px 14px; }
+.redeem-btn { width: 100%; background: var(--pink); color: var(--white); border: none; border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+.redeem-btn:active { background: #b05c94; }
+.p-screen { display: none; }
+.p-screen.active { display: block; }
+
+/* ── ACTIVITY ── */
+.act-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 18px 16px; }
+.act-sum-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 14px; padding: 14px 16px; }
+.act-sum-label { font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+.act-sum-val { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+.act-sum-sub { font-size: 10px; margin-top: 4px; font-weight: 500; }
+.act-filter { display: flex; gap: 7px; padding: 0 18px 14px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.act-filter::-webkit-scrollbar { display: none; }
+.act-pill { font-size: 11px; padding: 6px 13px; border-radius: 20px; cursor: pointer; border: 0.5px solid var(--border); background: var(--surface); color: var(--muted); font-family: inherit; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
+.act-pill.active { background: var(--pink-light); border-color: var(--pink-mid); color: var(--pink); font-weight: 600; }
+.act-group { padding: 0 18px; margin-bottom: 16px; }
+.act-month-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.6px; }
+.act-row { display: flex; align-items: center; gap: 12px; background: var(--white); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 7px; }
+.act-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.act-icon svg { width: 16px; height: 16px; }
+.act-mid { flex: 1; min-width: 0; }
+.act-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.act-date { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.act-right { text-align: right; flex-shrink: 0; }
+.act-amt-cr { font-size: 14px; font-weight: 700; color: var(--green); }
+.act-amt-db { font-size: 14px; font-weight: 700; color: #e24b4a; }
+.act-badge { font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 10px; margin-top: 3px; display: inline-block; }
+.badge-cr { background: var(--green-bg); color: var(--green-text); }
+.badge-db { background: #fcebeb; color: #a32d2d; }
+.badge-pend { background: var(--amber-bg); color: var(--amber); }
+
+/* ── LEADERBOARD ── */
+.podium-wrap { padding: 10px 18px 16px; }
+.podium { display: flex; align-items: flex-end; justify-content: center; gap: 8px; margin-bottom: 20px; }
+.podium-slot { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.podium-avatar { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--pink-darker); border: 2px solid var(--pink-mid); background: var(--pink-light); flex-shrink: 0; position: relative; }
+.podium-crown { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 15px; }
+.podium-name { font-size: 11px; font-weight: 600; color: var(--text); text-align: center; max-width: 80px; }
+.podium-total { font-size: 12px; font-weight: 700; color: var(--pink); }
+.podium-base { border-radius: 10px 10px 0 0; display: flex; align-items: center; justify-content: center; }
+.podium-rank { font-size: 16px; font-weight: 700; }
+.lb-list-section { padding: 0 18px 16px; }
+.lb-list-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.6px; }
+.lb-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--surface); border: 0.5px solid var(--border); border-radius: 14px; margin-bottom: 8px; }
+.lb-row.me { border-color: var(--pink-mid); background: #fdf5fa; }
+.lb-rank { font-size: 13px; font-weight: 700; color: var(--muted); width: 22px; text-align: center; flex-shrink: 0; }
+.lb-rank.gold { color: var(--amber); }
+.lb-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--pink-light); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--pink-darker); border: 1px solid var(--pink-mid); flex-shrink: 0; }
+.lb-info { flex: 1; }
+.lb-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.lb-role-text { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.lb-amt { font-size: 13px; font-weight: 700; color: var(--text); }
+.lb-bar-section { padding: 0 18px 16px; }
+.lb-bar-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.6px; }
+.lb-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.lb-bar-name { font-size: 11px; color: var(--text); width: 68px; flex-shrink: 0; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lb-bar-track { flex: 1; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden; }
+.lb-bar-fill { height: 100%; border-radius: 4px; background: var(--pink); transition: width 0.5s ease; }
+.lb-bar-val { font-size: 11px; font-weight: 700; color: var(--text); width: 52px; text-align: right; flex-shrink: 0; }
+
+.hf-pill { font-size:11px;font-weight:500;padding:7px 16px;border-radius:20px;border:0.5px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-family:inherit;white-space:nowrap;transition:all 0.15s;flex-shrink:0; }
+.hf-pill.active { background:var(--pink-light);border-color:var(--pink-mid);color:var(--pink);font-weight:700; }
+.htx-row { display:flex;align-items:center;gap:12px;padding:13px 14px;transition:background 0.1s;cursor:default; }
+.htx-row:active { background:#fafafa; }
+
+/* ── PROFILE ── */
+.profile-hero { padding: 10px 22px 20px; display: flex; flex-direction: column; align-items: center; }
+.profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--pink-light); border: 3px solid var(--pink-mid); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; color: var(--pink-darker); margin-bottom: 12px; }
+.profile-name { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.profile-role-txt { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.profile-tier { padding: 6px 18px; border-radius: 20px; background: var(--pink-light); border: 0.5px solid var(--pink-mid); font-size: 12px; font-weight: 600; color: var(--pink-dark); }
+.profile-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 0 18px 16px; }
+.profile-stat { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
+.profile-stat-val { font-size: 15px; font-weight: 700; color: var(--text); }
+.profile-stat-label { font-size: 10px; color: var(--muted); margin-top: 3px; }
+.profile-section { padding: 0 18px 14px; }
+.profile-section-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.6px; }
+.profile-card { background: var(--white); border: 0.5px solid var(--border); border-radius: 14px; overflow: hidden; }
+.profile-row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.12s; }
+.profile-row:last-child { border-bottom: none; }
+.profile-row:active { background: var(--surface); }
+.profile-row-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.profile-row-icon svg { width: 17px; height: 17px; }
+.profile-row-text { flex: 1; }
+.profile-row-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.profile-row-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.profile-row-right { display: flex; align-items: center; gap: 6px; }
+.profile-row-val { font-size: 12px; font-weight: 600; color: var(--pink); }
+.logout-btn { width: 100%; padding: 14px; border-radius: 12px; border: 0.5px solid var(--pink-mid); background: var(--pink-light); color: var(--pink-dark); font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; margin: 4px 0 16px; }
+
+@media (max-width: 430px) {
+  html, body { padding: 0; background: #fff; }
+  .phone { width: 100%; border-radius: 0; box-shadow: none; border: none; min-height: 100vh; }
+}
+
+/* ── DRAWERS / MODALS ── */
+.drawer-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.38);
+  z-index: 100; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease; border-radius: 44px;
+}
+.drawer-overlay.open { opacity: 1; pointer-events: all; }
+.drawer {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: var(--white); border-radius: 22px 22px 0 0;
+  z-index: 101; transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+  max-height: 85%; overflow-y: auto; scrollbar-width: none;
+}
+.drawer::-webkit-scrollbar { display: none; }
+.drawer.open { transform: translateY(0); }
+.drawer-handle { width: 36px; height: 4px; border-radius: 2px; background: #ddd; margin: 10px auto 4px; }
+.drawer-hdr { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 14px; border-bottom: 0.5px solid var(--border); }
+.drawer-title { font-size: 16px; font-weight: 700; color: var(--text); }
+.drawer-close { width: 30px; height: 30px; border-radius: 50%; background: var(--surface); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.drawer-body { padding: 18px 20px 28px; }
+.d-field { margin-bottom: 16px; }
+.d-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+.d-input { width: 100%; padding: 11px 14px; border: 0.5px solid var(--border); border-radius: 11px; font-size: 14px; color: var(--text); background: var(--surface); font-family: inherit; outline: none; transition: border-color 0.15s; }
+.d-input:focus { border-color: var(--pink); background: #fff; }
+.d-input[readonly] { color: var(--muted); cursor: default; }
+.d-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 0.5px solid #f2f2f2; }
+.d-row:last-child { border-bottom: none; }
+.d-row-key { font-size: 13px; color: var(--muted); }
+.d-row-val { font-size: 13px; font-weight: 600; color: var(--text); }
+.d-save-btn { width: 100%; padding: 13px; border-radius: 12px; background: var(--pink); color: #fff; border: none; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; margin-top: 6px; transition: background 0.15s; }
+.d-save-btn:active { background: #b05c94; }
+.d-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 0.5px solid #f2f2f2; }
+.d-toggle-row:last-child { border-bottom: none; }
+.d-toggle-info .d-toggle-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.d-toggle-info .d-toggle-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.toggle-switch { width: 44px; height: 26px; border-radius: 13px; background: #ddd; position: relative; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+.toggle-switch.on { background: var(--pink); }
+.toggle-knob { width: 20px; height: 20px; border-radius: 50%; background: #fff; position: absolute; top: 3px; left: 3px; transition: left 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.18); }
+.toggle-switch.on .toggle-knob { left: 21px; }
+.d-section-label { font-size: 11px; color: var(--muted); font-weight: 600; margin: 16px 0 10px; text-transform: uppercase; letter-spacing: 0.4px; }
+.d-bonus-stat { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+.d-bonus-stat-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.d-bonus-stat-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.d-bonus-stat-amt { font-size: 18px; font-weight: 700; color: var(--pink); }
+.d-progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.d-progress-fill { height: 100%; border-radius: 3px; background: var(--pink); transition: width 0.6s ease; }
+.d-progress-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); }
+.d-faq-item { padding: 13px 0; border-bottom: 0.5px solid #f2f2f2; cursor: pointer; }
+.d-faq-item:last-child { border-bottom: none; }
+.d-faq-q { font-size: 13px; font-weight: 500; color: var(--text); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.d-faq-a { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; display: none; }
+.d-faq-a.open { display: block; }
+.d-contact-btn { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; cursor: pointer; margin-bottom: 10px; }
+.d-contact-btn-text { font-size: 13px; font-weight: 500; color: var(--text); }
+.d-contact-btn-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.toast {
+  position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: #1a1a1a; color: #fff; font-size: 12px; font-weight: 500;
+  padding: 10px 18px; border-radius: 20px; z-index: 200;
+  opacity: 0; transition: all 0.25s ease; pointer-events: none; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.logout-confirm { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: flex-end; border-radius: 44px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.logout-confirm.open { opacity: 1; pointer-events: all; }
+.logout-sheet { background: var(--white); width: 100%; border-radius: 22px 22px 0 0; padding: 22px 20px 32px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32,0.72,0,1); }
+.logout-confirm.open .logout-sheet { transform: translateY(0); }
+.logout-sheet-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; text-align: center; }
+.logout-sheet-sub { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 22px; }
+.logout-confirm-btn { width: 100%; padding: 14px; border-radius: 12px; background: #e24b4a; color: #fff; border: none; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; margin-bottom: 10px; }
+.logout-cancel-btn { width: 100%; padding: 14px; border-radius: 12px; background: var(--surface); color: var(--text); border: 0.5px solid var(--border); font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="phone" style="position:relative">
+
+  <!-- STATUS BAR -->
+  <div class="statusbar">
+    <span class="time">9:41</span>
+    <div class="icons">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"><path d="M1 6s4-3 11-3 11 3 11 3"/><path d="M5 10s3-2 7-2 7 2 7 2"/><path d="M8 14s2-1 4-1 4 1 4 1"/><circle cx="12" cy="18" r="1" fill="#1a1a1a"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="4" width="3" height="8" rx="1" fill="#1a1a1a"/><rect x="4" y="2.5" width="3" height="9.5" rx="1" fill="#1a1a1a"/><rect x="8" y="1" width="3" height="11" rx="1" fill="#1a1a1a"/><rect x="12" y="0" width="3" height="12" rx="1" fill="#1a1a1a" opacity=".3"/></svg>
+      <svg width="24" height="12" viewBox="0 0 24 12"><rect x="0" y="1" width="19" height="10" rx="2.5" stroke="#1a1a1a" stroke-width="1.2" fill="none"/><rect x="1.5" y="2.5" width="14" height="7" rx="1.5" fill="#1a1a1a"/><rect x="20" y="4" width="3" height="4" rx="1" fill="#1a1a1a" opacity=".4"/></svg>
+    </div>
+  </div>
+
+  <!-- SHARED HEADER -->
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <div class="title" id="pageTitle">Nizan Makeovers</div>
+      <div class="subtitle" id="pageSubtitle">Bonus Dashboard</div>
+    </div>
+    <div class="bell">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#c96fa8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <div class="bell-dot"></div>
+    </div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div class="content-area">
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--  PAGE 1: PORTFOLIO                         -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="page active" id="page-portfolio">
+
+      <div class="artist-sel-wrap">
+        <select class="artist-sel" id="artistSelect" onchange="switchArtist(this.value)">
+          <option value="0">Priya Krishnan</option>
+          <option value="1">Sneha Nair</option>
+          <option value="2">Divya Menon</option>
+          <option value="3">Anu Pillai</option>
+          <option value="4">Meera Raj</option>
+        </select>
+      </div>
+
+      <div class="artist-row">
+        <div class="avatar" id="avEl">PK</div>
+        <div class="artist-info">
+          <div class="artist-name" id="nameEl">Priya Krishnan</div>
+          <div class="artist-role" id="roleEl">Senior Artist</div>
+        </div>
+        <div class="tier-badge" id="tierEl">Gold Tier</div>
+      </div>
+
+      <div class="sum-card">
+        <div class="sum-top">
+          <div class="sum-col"><label>Total Earned</label><div class="sum-amount" id="totalEl">₹4,780</div></div>
+          <div class="sum-col"><label>Redeemable</label><div class="sum-amount" id="redeemEl">₹3,250</div></div>
+        </div>
+        <div class="sum-divider"></div>
+        <div class="sum-bottom">
+          <span>This month's bonus</span>
+          <div class="sum-right">
+            <span class="sum-bonus" id="mbEl">+₹1,530</span>
+            <span class="pct-pill" id="mpEl">+24.3%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs-wrap">
+        <div class="tabs">
+          <div class="tab active" onclick="switchPTab('bonuses',this)">My Bonuses</div>
+          <div class="tab" onclick="switchPTab('phistory',this)">History</div>
+          <div class="tab" onclick="switchPTab('plb',this)">Leaderboard</div>
+        </div>
+      </div>
+
+      <!-- Sub: Bonuses -->
+      <div class="p-screen active" id="p-bonuses">
+        <div class="pills">
+          <div class="pill active" onclick="filterPill(this,'All')">All</div>
+          <div class="pill" onclick="filterPill(this,'Q')">Quality</div>
+          <div class="pill" onclick="filterPill(this,'S')">Social</div>
+          <div class="pill" onclick="filterPill(this,'R')">Referral</div>
+        </div>
+        <div class="bonus-cards">
+          <div data-cat="Q">
+            <div class="bonus-card" onclick="toggleExpand('exp1')">
+              <div class="icon-box" style="background:#eeedfe"><svg viewBox="0 0 24 24" fill="none" stroke="#534ab7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div>
+              <div class="bonus-mid"><div class="bonus-name">Quality Bonus</div><div class="bonus-desc">Client rating · Technique score</div></div>
+              <div class="bonus-right"><div class="bonus-pct" id="qPctEl">+18.5%</div><div class="bonus-amt" id="qAmtEl">+₹740</div><div class="status-tag"><div class="sdot" style="background:#639922"></div><span class="slabel">Credited</span></div></div>
+            </div>
+            <div class="expand-panel" id="exp1"><div class="exp-row"><span class="exp-key">Client rating avg</span><span class="exp-val">4.8 / 5.0</span></div><div class="exp-row"><span class="exp-key">Technique score</span><span class="exp-val">92 / 100</span></div><div class="exp-row"><span class="exp-key">Bookings assessed</span><span class="exp-val">12</span></div><div class="exp-row"><span class="exp-key">Credited on</span><span class="exp-val">Apr 10, 2025</span></div></div>
+          </div>
+          <div data-cat="S">
+            <div class="bonus-card" onclick="toggleExpand('exp2')">
+              <div class="icon-box" style="background:#faece7"><svg viewBox="0 0 24 24" fill="none" stroke="#993c1d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+              <div class="bonus-mid"><div class="bonus-name">Social Virality Bonus</div><div class="bonus-desc">Reels · Views · Saves after work</div></div>
+              <div class="bonus-right"><div class="bonus-pct" id="sPctEl">+26.1%</div><div class="bonus-amt" id="sAmtEl">+₹620</div><div class="status-tag"><div class="sdot" style="background:#ba7517"></div><span class="slabel">Pending</span></div></div>
+            </div>
+            <div class="expand-panel" id="exp2"><div class="exp-row"><span class="exp-key">Reels posted</span><span class="exp-val">4</span></div><div class="exp-row"><span class="exp-key">Total views</span><span class="exp-val">18,400</span></div><div class="exp-row"><span class="exp-key">Saves</span><span class="exp-val">1,240</span></div><div class="exp-row"><span class="exp-key">Unlocks in</span><span class="exp-val" style="color:#ba7517">3 days remaining</span></div></div>
+          </div>
+          <div data-cat="R">
+            <div class="bonus-card" onclick="toggleExpand('exp3')">
+              <div class="icon-box" style="background:#eaf3de"><svg viewBox="0 0 24 24" fill="none" stroke="#3b6d11" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14c1.5-.7 3.1-.7 4 0 1.1.7 2 2.3 2 4"/></svg></div>
+              <div class="bonus-mid"><div class="bonus-name">Repeat Customer Bonus</div><div class="bonus-desc">Old client referrals · Rebookings</div></div>
+              <div class="bonus-right"><div class="bonus-pct" id="rPctEl">+7.4%</div><div class="bonus-amt" id="rAmtEl">+₹170</div><div class="status-tag"><div class="sdot" style="background:#639922"></div><span class="slabel">Credited</span></div></div>
+            </div>
+            <div class="expand-panel" id="exp3"><div class="exp-row"><span class="exp-key">Referrals this month</span><span class="exp-val">3</span></div><div class="exp-row"><span class="exp-key">Rebookings</span><span class="exp-val">5</span></div><div class="exp-row"><span class="exp-key">Client repeat rate</span><span class="exp-val">62%</span></div><div class="exp-row"><span class="exp-key">Credited on</span><span class="exp-val">Apr 12, 2025</span></div></div>
+          </div>
+        </div>
+        <div class="redeem-wrap"><button class="redeem-btn" id="redeemBtn">Redeem ₹3,250 →</button></div>
+      </div>
+
+      <!-- Sub: History -->
+      <div class="p-screen" id="p-phistory" style="padding:0 0 16px">
+        <!-- summary bar -->
+        <div style="margin:0 18px 14px;background:var(--surface);border:0.5px solid var(--border);border-radius:14px;overflow:hidden">
+          <div style="display:flex;border-bottom:0.5px solid var(--border)">
+            <div style="flex:1;padding:14px 16px;border-right:0.5px solid var(--border)"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">Total Earned</div><div style="font-size:16px;font-weight:700;color:var(--text)" id="hhTotal">₹4,780</div></div>
+            <div style="flex:1;padding:14px 16px"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">Total Redeemed</div><div style="font-size:16px;font-weight:700;color:var(--pink)" id="hhRedeem">₹3,250</div></div>
+          </div>
+        </div>
+        <!-- filter pills -->
+        <div style="display:flex;gap:8px;padding:0 18px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none">
+          <button class="hf-pill active" onclick="historyFilter('all',this)">All</button>
+          <button class="hf-pill" onclick="historyFilter('cr',this)">Credits</button>
+          <button class="hf-pill" onclick="historyFilter('db',this)">Debits</button>
+          <button class="hf-pill" onclick="historyFilter('quality',this)">Quality</button>
+          <button class="hf-pill" onclick="historyFilter('social',this)">Social</button>
+          <button class="hf-pill" onclick="historyFilter('repeat',this)">Repeat</button>
+          <button class="hf-pill" onclick="historyFilter('redeem',this)">Redeemed</button>
+        </div>
+        <div id="historyContent" style="padding:0 18px"></div>
+      </div>
+
+      <!-- Sub: Leaderboard -->
+      <div class="p-screen" id="p-plb" style="padding:0 18px 16px">
+        <div id="plbList"></div>
+      </div>
+
+    </div><!-- /portfolio -->
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--  PAGE 2: ACTIVITY                          -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="page" id="page-activity">
+
+      <!-- UNIFIED BALANCE CARD -->
+      <div style="margin: 0 18px 14px; background: linear-gradient(135deg, #fbeaf0 0%, #f7e6f3 100%); border: 0.5px solid var(--pink-mid); border-radius: 18px; padding: 16px 18px;">
+        <div style="font-size: 10px; color: var(--pink-dark); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Available Balance</div>
+        <div style="font-size: 30px; font-weight: 700; color: var(--text); letter-spacing: -1px; margin-bottom: 14px;">₹3,250</div>
+        <div style="display: grid; grid-template-columns: 1fr 0.5px 1fr 0.5px 1fr; gap: 0; background: rgba(255,255,255,0.55); border-radius: 12px; border: 0.5px solid rgba(201,111,168,0.18); overflow: hidden;">
+          <div style="padding: 10px 12px; text-align: center;">
+            <div style="font-size: 9px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px;">Credited</div>
+            <div style="font-size: 15px; font-weight: 700; color: var(--green);">₹5,720</div>
+            <div style="font-size: 9px; color: var(--green); margin-top: 2px;">↑ 14 txns</div>
+          </div>
+          <div style="width: 0.5px; background: rgba(201,111,168,0.2);"></div>
+          <div style="padding: 10px 12px; text-align: center;">
+            <div style="font-size: 9px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px;">Deducted</div>
+            <div style="font-size: 15px; font-weight: 700; color: #e24b4a;">₹940</div>
+            <div style="font-size: 9px; color: #e24b4a; margin-top: 2px;">↓ 3 txns</div>
+          </div>
+          <div style="width: 0.5px; background: rgba(201,111,168,0.2);"></div>
+          <div style="padding: 10px 12px; text-align: center;">
+            <div style="font-size: 9px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px;">Withdrawn</div>
+            <div style="font-size: 15px; font-weight: 700; color: var(--text);">₹5,460</div>
+            <div style="font-size: 9px; color: var(--muted); margin-top: 2px;">Total</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="act-filter">
+        <button class="act-pill active" onclick="actFilter(this,'all')">All</button>
+        <button class="act-pill" onclick="actFilter(this,'cr')">Credited</button>
+        <button class="act-pill" onclick="actFilter(this,'db')">Deducted</button>
+        <button class="act-pill" onclick="actFilter(this,'pend')">Pending</button>
+        <button class="act-pill" onclick="actFilter(this,'wd')">Withdraw</button>
+      </div>
+
+      <!-- WITHDRAWAL PANEL (shown when Withdraw pill is active) -->
+      <div id="act-withdraw-panel" style="display:none;padding:0 18px 16px">
+        <!-- Withdraw action card -->
+        <div style="background:var(--white);border:0.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div>
+              <div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px">Ready to Withdraw</div>
+              <div style="font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.6px">₹3,250</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:10px;color:var(--muted);margin-bottom:2px">Next payout</div>
+              <div style="font-size:12px;font-weight:700;color:var(--green)">May 5, 2025</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:4px">
+            <div style="flex:1;background:var(--amber-bg);border-radius:10px;padding:9px 12px;text-align:center">
+              <div style="font-size:9px;color:var(--amber);font-weight:600;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px">Processing</div>
+              <div style="font-size:14px;font-weight:700;color:var(--amber)">₹620</div>
+            </div>
+            <div style="flex:1;background:var(--green-bg);border-radius:10px;padding:9px 12px;text-align:center">
+              <div style="font-size:9px;color:var(--green-text);font-weight:600;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px">Total Paid Out</div>
+              <div style="font-size:14px;font-weight:700;color:var(--green)">₹5,460</div>
+            </div>
+          </div>
+          <button style="width:100%;background:var(--pink);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px" onclick="showToast('Withdrawal request submitted ✓')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v14M5 9l7 7 7-7"/><rect x="3" y="18" width="18" height="3" rx="1.5"/></svg>
+            Withdraw ₹3,250 → HDFC ···4821
+          </button>
+        </div>
+        <!-- Withdrawal history -->
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;padding:0 2px">Withdrawal History</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="act-row" style="margin-bottom:0">
+            <div class="act-icon" style="background:#eaf3de"><svg viewBox="0 0 24 24" fill="none" stroke="#3b6d11" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+            <div class="act-mid"><div class="act-name">HDFC Bank ···4821</div><div class="act-date">Apr 5, 2025 · Settled in 2 days</div></div>
+            <div class="act-right"><div class="act-amt-cr">₹2,100</div><div class="act-badge badge-cr">Settled</div></div>
+          </div>
+          <div class="act-row" style="margin-bottom:0">
+            <div class="act-icon" style="background:#faeeda"><svg viewBox="0 0 24 24" fill="none" stroke="#ba7517" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div class="act-mid"><div class="act-name">HDFC Bank ···4821</div><div class="act-date">Apr 14, 2025 · Processing</div></div>
+            <div class="act-right"><div style="font-size:14px;font-weight:700;color:var(--amber)">₹620</div><div class="act-badge badge-pend">Processing</div></div>
+          </div>
+          <div class="act-row" style="margin-bottom:0">
+            <div class="act-icon" style="background:#eaf3de"><svg viewBox="0 0 24 24" fill="none" stroke="#3b6d11" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+            <div class="act-mid"><div class="act-name">HDFC Bank ···4821</div><div class="act-date">Mar 6, 2025 · Settled in 2 days</div></div>
+            <div class="act-right"><div class="act-amt-cr">₹1,800</div><div class="act-badge badge-cr">Settled</div></div>
+          </div>
+          <div class="act-row" style="margin-bottom:0">
+            <div class="act-icon" style="background:#eaf3de"><svg viewBox="0 0 24 24" fill="none" stroke="#3b6d11" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+            <div class="act-mid"><div class="act-name">HDFC Bank ···4821</div><div class="act-date">Feb 5, 2025 · Settled in 2 days</div></div>
+            <div class="act-right"><div class="act-amt-cr">₹1,560</div><div class="act-badge badge-cr">Settled</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSACTIONS (hidden when Withdraw pill is active) -->
+      <div id="act-txns-panel">
+
+      <div class="act-group">
+        <div class="act-month-label">April 2025</div>
+        <div class="act-row" data-type="cr">
+          <div class="act-icon" style="background:#eeedfe"><svg viewBox="0 0 24 24" fill="none" stroke="#534ab7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <div class="act-mid"><div class="act-name">Quality Bonus</div><div class="act-date">Apr 10, 2025 · Client rating</div></div>
+          <div class="act-right"><div class="act-amt-cr">+₹740</div><div class="act-badge badge-cr">Credited</div></div>
+        </div>
+        <div class="act-row" data-type="pend">
+          <div class="act-icon" style="background:#faece7"><svg viewBox="0 0 24 24" fill="none" stroke="#993c1d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+          <div class="act-mid"><div class="act-name">Social Virality Bonus</div><div class="act-date">Apr 14, 2025 · Reels reach</div></div>
+          <div class="act-right"><div class="act-amt-cr">+₹620</div><div class="act-badge badge-pend">Pending</div></div>
+        </div>
+        <div class="act-row" data-type="cr">
+          <div class="act-icon" style="background:#eaf3de"><svg viewBox="0 0 24 24" fill="none" stroke="#3b6d11" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14c1.5-.7 3.1-.7 4 0 1.1.7 2 2.3 2 4"/></svg></div>
+          <div class="act-mid"><div class="act-name">Repeat Customer Bonus</div><div class="act-date">Apr 12, 2025 · 5 rebookings</div></div>
+          <div class="act-right"><div class="act-amt-cr">+₹170</div><div class="act-badge badge-cr">Credited</div></div>
+        </div>
+        <div class="act-row" data-type="db">
+          <div class="act-icon" style="background:#fcebeb"><svg viewBox="0 0 24 24" fill="none" stroke="#a32d2d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+          <div class="act-mid"><div class="act-name">Late Arrival Deduction</div><div class="act-date">Apr 8, 2025 · Policy violation</div></div>
+          <div class="act-right"><div class="act-amt-db">−₹200</div><div class="act-badge badge-db">Deducted</div></div>
+        </div>
+      </div>
+
+      <div class="act-group">
+        <div class="act-month-label">March 2025</div>
+        <div class="act-row" data-type="cr">
+          <div class="act-icon" style="background:#eeedfe"><svg viewBox="0 0 24 24" fill="none" stroke="#534ab7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <div class="act-mid"><div class="act-name">Quality Bonus</div><div class="act-date">Mar 9, 2025 · Client rating</div></div>
+          <div class="act-right"><div class="act-amt-cr">+₹680</div><div class="act-badge badge-cr">Credited</div></div>
+        </div>
+        <div class="act-row" data-type="cr">
+          <div class="act-icon" style="background:#faece7"><svg viewBox="0 0 24 24" fill="none" stroke="#993c1d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+          <div class="act-mid"><div class="act-name">Social Virality Bonus</div><div class="act-date">Mar 14, 2025 · Reels reach</div></div>
+          <div class="act-right"><div class="act-amt-cr">+₹540</div><div class="act-badge badge-cr">Credited</div></div>
+        </div>
+        <div class="act-row" data-type="db">
+          <div class="act-icon" style="background:#fcebeb"><svg viewBox="0 0 24 24" fill="none" stroke="#a32d2d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+          <div class="act-mid"><div class="act-name">Equipment Damage Deduction</div><div class="act-date">Mar 20, 2025 · Policy</div></div>
+          <div class="act-right"><div class="act-amt-db">−₹500</div><div class="act-badge badge-db">Deducted</div></div>
+        </div>
+        <div class="act-row" data-type="cr">
+          <div class="act-icon" style="background:#eaf3de"><svg viewBox="0 0 24 24" fill="none" stroke="#3b6d11" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14c1.5-.7 3.1-.7 4 0 1.1.7 2 2.3 2 4"/></svg></div>
+          <div class="act-mid"><div class="act-name">Repeat Customer Bonus</div><div class="act-date">Mar 11, 2025 · 4 rebookings</div></div>
+          <div class="act-right"><div class="act-amt-cr">+₹150</div><div class="act-badge badge-cr">Credited</div></div>
+        </div>
+      </div>
+
+      <div class="act-group">
+        <div class="act-month-label">February 2025</div>
+        <div class="act-row" data-type="cr">
+          <div class="act-icon" style="background:#eeedfe"><svg viewBox="0 0 24 24" fill="none" stroke="#534ab7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <div class="act-mid"><div class="act-name">Quality Bonus</div><div class="act-date">Feb 8, 2025 · Client rating</div></div>
+          <div class="act-right"><div class="act-amt-cr">+₹590</div><div class="act-badge badge-cr">Credited</div></div>
+        </div>
+        <div class="act-row" data-type="cr">
+          <div class="act-icon" style="background:#faece7"><svg viewBox="0 0 24 24" fill="none" stroke="#993c1d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+          <div class="act-mid"><div class="act-name">Social Virality Bonus</div><div class="act-date">Feb 13, 2025 · Reels reach</div></div>
+          <div class="act-right"><div class="act-amt-cr">+₹480</div><div class="act-badge badge-cr">Credited</div></div>
+        </div>
+        <div class="act-row" data-type="db">
+          <div class="act-icon" style="background:#fcebeb"><svg viewBox="0 0 24 24" fill="none" stroke="#a32d2d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+          <div class="act-mid"><div class="act-name">Client Complaint Deduction</div><div class="act-date">Feb 22, 2025 · Review penalty</div></div>
+          <div class="act-right"><div class="act-amt-db">−₹240</div><div class="act-badge badge-db">Deducted</div></div>
+        </div>
+      </div>
+
+      </div><!-- /act-txns-panel -->
+
+    </div><!-- /activity -->
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--  PAGE 3: LEADERBOARD                       -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="page" id="page-leaderboard">
+
+      <div class="podium-wrap">
+        <div class="podium" id="podiumEl"></div>
+      </div>
+
+      <div class="lb-bar-section">
+        <div class="lb-bar-label">Earnings comparison</div>
+        <div id="lbBars"></div>
+      </div>
+
+      <div class="lb-list-section">
+        <div class="lb-list-label">Full Rankings</div>
+        <div id="lbFullList"></div>
+      </div>
+
+    </div><!-- /leaderboard -->
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--  PAGE 4: PROFILE                           -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="page" id="page-profile">
+
+      <div class="profile-hero">
+        <div class="profile-avatar" id="profAvatar">PK</div>
+        <div class="profile-name" id="profName">Priya Krishnan</div>
+        <div class="profile-role-txt" id="profRoleTxt">Senior Artist · Nizan Makeovers</div>
+        <div class="profile-tier" id="profTier">Gold Tier</div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="profile-stat"><div class="profile-stat-val" id="profTotal">₹4,780</div><div class="profile-stat-label">Earned</div></div>
+        <div class="profile-stat"><div class="profile-stat-val" style="color:var(--pink)" id="profRedeem">₹3,250</div><div class="profile-stat-label">Redeemable</div></div>
+        <div class="profile-stat"><div class="profile-stat-val" style="color:var(--amber)" id="profRank">#2</div><div class="profile-stat-label">Rank</div></div>
+      </div>
+
+      <div class="profile-section">
+        <div class="profile-section-label">Bonus Breakdown</div>
+        <div class="profile-card">
+          <div class="profile-row" onclick="openDrawer('drawer-qual')">
+            <div class="profile-row-icon" style="background:#eeedfe"><svg viewBox="0 0 24 24" fill="none" stroke="#534ab7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div>
+            <div class="profile-row-text"><div class="profile-row-title">Quality Bonus</div><div class="profile-row-sub">Client rating · Technique</div></div>
+            <div class="profile-row-right"><span class="profile-row-val" id="profQ">+₹740</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="profile-row" onclick="openDrawer('drawer-social')">
+            <div class="profile-row-icon" style="background:#faece7"><svg viewBox="0 0 24 24" fill="none" stroke="#993c1d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+            <div class="profile-row-text"><div class="profile-row-title">Social Virality Bonus</div><div class="profile-row-sub">Reels · Views · Saves</div></div>
+            <div class="profile-row-right"><span class="profile-row-val" id="profS">+₹620</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="profile-row" onclick="openDrawer('drawer-repeat')">
+            <div class="profile-row-icon" style="background:#eaf3de"><svg viewBox="0 0 24 24" fill="none" stroke="#3b6d11" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14c1.5-.7 3.1-.7 4 0 1.1.7 2 2.3 2 4"/></svg></div>
+            <div class="profile-row-text"><div class="profile-row-title">Repeat Customer Bonus</div><div class="profile-row-sub">Referrals · Rebookings</div></div>
+            <div class="profile-row-right"><span class="profile-row-val" id="profR">+₹170</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <div class="profile-section-label">Account</div>
+        <div class="profile-card">
+          <div class="profile-row" onclick="openDrawer('drawer-personal')">
+            <div class="profile-row-icon" style="background:#e6f1fb"><svg viewBox="0 0 24 24" fill="none" stroke="#185fa5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+            <div class="profile-row-text"><div class="profile-row-title">Personal Details</div><div class="profile-row-sub">Name, phone, email</div></div>
+            <div class="profile-row-right"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="profile-row" onclick="openDrawer('drawer-bank')">
+            <div class="profile-row-icon" style="background:#eaf3de"><svg viewBox="0 0 24 24" fill="none" stroke="#3b6d11" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+            <div class="profile-row-text"><div class="profile-row-title">Bank Account</div><div class="profile-row-sub">Linked for redemption</div></div>
+            <div class="profile-row-right"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="profile-row" onclick="openDrawer('drawer-notif')">
+            <div class="profile-row-icon" style="background:#fbeaf0"><svg viewBox="0 0 24 24" fill="none" stroke="#993556" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+            <div class="profile-row-text"><div class="profile-row-title">Notifications</div><div class="profile-row-sub">Bonus alerts, updates</div></div>
+            <div class="profile-row-right"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="profile-row" onclick="openDrawer('drawer-help')">
+            <div class="profile-row-icon" style="background:#f1efe8"><svg viewBox="0 0 24 24" fill="none" stroke="#5f5e5a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></div>
+            <div class="profile-row-text"><div class="profile-row-title">Help & Support</div><div class="profile-row-sub">FAQ, contact team</div></div>
+            <div class="profile-row-right"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:0 18px 20px">
+        <button class="logout-btn" onclick="openLogout()">Log Out</button>
+      </div>
+
+    </div><!-- /profile -->
+
+  </div><!-- /content-area -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item" id="nav-activity" onclick="switchPage('activity')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span class="nav-label">Activity</span>
+    </div>
+    <div class="nav-item active" id="nav-portfolio" onclick="switchPage('portfolio')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c96fa8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span class="nav-label">Portfolio</span>
+    </div>
+    <div class="nav-item" id="nav-leaderboard" onclick="switchPage('leaderboard')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 20 18 10"/><polyline points="12 20 12 4"/><polyline points="6 20 6 14"/></svg>
+      <span class="nav-label">Leaderboard</span>
+    </div>
+    <div class="nav-item" id="nav-profile" onclick="switchPage('profile')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="nav-label">Profile</span>
+    </div>
+  </div>
+
+
+  <!-- ══ DRAWERS ══ -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeAllDrawers()"></div>
+
+  <!-- PERSONAL DETAILS -->
+  <div class="drawer" id="drawer-personal">
+    <div class="drawer-handle"></div>
+    <div class="drawer-hdr">
+      <span class="drawer-title">Personal Details</span>
+      <div class="drawer-close" onclick="closeAllDrawers()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+    <div class="drawer-body">
+      <div class="d-field"><div class="d-label">Full Name</div><input class="d-input" id="inp-name" type="text" value="Priya Krishnan"></div>
+      <div class="d-field"><div class="d-label">Phone Number</div><input class="d-input" type="tel" value="+91 98765 43210"></div>
+      <div class="d-field"><div class="d-label">Email Address</div><input class="d-input" type="email" value="priya.k@nizanmakeovers.in"></div>
+      <div class="d-field"><div class="d-label">Role</div><input class="d-input" type="text" value="Senior Artist" readonly></div>
+      <div class="d-field"><div class="d-label">Studio Location</div><input class="d-input" type="text" value="Koramangala, Bengaluru"></div>
+      <button class="d-save-btn" onclick="savePersonal()">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- BANK ACCOUNT -->
+  <div class="drawer" id="drawer-bank">
+    <div class="drawer-handle"></div>
+    <div class="drawer-hdr">
+      <span class="drawer-title">Bank Account</span>
+      <div class="drawer-close" onclick="closeAllDrawers()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+    <div class="drawer-body">
+      <div style="background:#eaf3de;border:0.5px solid #b8d98b;border-radius:11px;padding:12px 14px;margin-bottom:18px;display:flex;align-items:center;gap:10px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b6d11" stroke-width="2"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+        <span style="font-size:12px;color:#3b6d11;font-weight:500">Account verified and linked for redemption</span>
+      </div>
+      <div class="d-field"><div class="d-label">Account Holder</div><input class="d-input" type="text" value="Priya Krishnan" readonly></div>
+      <div class="d-field"><div class="d-label">Bank Name</div><input class="d-input" type="text" value="HDFC Bank" readonly></div>
+      <div class="d-field"><div class="d-label">Account Number</div><input class="d-input" type="text" value="•••• •••• 4821" readonly></div>
+      <div class="d-field"><div class="d-label">IFSC Code</div><input class="d-input" type="text" value="HDFC0001234" readonly></div>
+      <div class="d-section-label">Redemption History</div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden">
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">Apr 5, 2025</span><span class="d-row-val" style="color:var(--green)">+₹2,100</span></div>
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">Mar 6, 2025</span><span class="d-row-val" style="color:var(--green)">+₹1,800</span></div>
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">Feb 5, 2025</span><span class="d-row-val" style="color:var(--green)">+₹1,560</span></div>
+      </div>
+      <button class="d-save-btn" style="margin-top:18px;background:var(--surface);color:var(--pink);border:0.5px solid var(--pink-mid)" onclick="showToast('Request sent to update bank account')">Request Account Change</button>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="drawer" id="drawer-notif">
+    <div class="drawer-handle"></div>
+    <div class="drawer-hdr">
+      <span class="drawer-title">Notifications</span>
+      <div class="drawer-close" onclick="closeAllDrawers()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+    <div class="drawer-body">
+      <div class="d-section-label">Bonus Alerts</div>
+      <div class="d-toggle-row">
+        <div class="d-toggle-info"><div class="d-toggle-title">Bonus Credited</div><div class="d-toggle-sub">Notify when bonus is paid out</div></div>
+        <div class="toggle-switch on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="d-toggle-row">
+        <div class="d-toggle-info"><div class="d-toggle-title">Pending Bonus Unlock</div><div class="d-toggle-sub">Remind 1 day before unlock</div></div>
+        <div class="toggle-switch on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="d-toggle-row">
+        <div class="d-toggle-info"><div class="d-toggle-title">Deduction Alert</div><div class="d-toggle-sub">Notify on any deductions</div></div>
+        <div class="toggle-switch on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="d-section-label">Performance</div>
+      <div class="d-toggle-row">
+        <div class="d-toggle-info"><div class="d-toggle-title">Leaderboard Updates</div><div class="d-toggle-sub">Weekly rank change summary</div></div>
+        <div class="toggle-switch on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="d-toggle-row">
+        <div class="d-toggle-info"><div class="d-toggle-title">Monthly Report</div><div class="d-toggle-sub">Summary at month end</div></div>
+        <div class="toggle-switch" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="d-section-label">General</div>
+      <div class="d-toggle-row">
+        <div class="d-toggle-info"><div class="d-toggle-title">App Updates & News</div><div class="d-toggle-sub">New features and announcements</div></div>
+        <div class="toggle-switch" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <button class="d-save-btn" onclick="showToast('Notification preferences saved')">Save Preferences</button>
+    </div>
+  </div>
+
+  <!-- HELP & SUPPORT -->
+  <div class="drawer" id="drawer-help">
+    <div class="drawer-handle"></div>
+    <div class="drawer-hdr">
+      <span class="drawer-title">Help & Support</span>
+      <div class="drawer-close" onclick="closeAllDrawers()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+    <div class="drawer-body">
+      <div class="d-section-label">Contact Us</div>
+      <div class="d-contact-btn" onclick="showToast('Opening WhatsApp…')">
+        <div style="width:36px;height:36px;border-radius:10px;background:#e8f7ed;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 11.999c0 1.869.505 3.62 1.385 5.128L2 22l4.949-1.372A9.949 9.949 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" fill="none" stroke="#25d366" stroke-width="1.5"/></svg></div>
+        <div><div class="d-contact-btn-text">WhatsApp Support</div><div class="d-contact-btn-sub">Usually replies within 1 hour</div></div>
+      </div>
+      <div class="d-contact-btn" onclick="showToast('Opening email client…')">
+        <div style="width:36px;height:36px;border-radius:10px;background:#e6f1fb;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#185fa5" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg></div>
+        <div><div class="d-contact-btn-text">Email Support</div><div class="d-contact-btn-sub">support@nizanmakeovers.in</div></div>
+      </div>
+      <div class="d-section-label">FAQs</div>
+      <div class="d-faq-item" onclick="toggleFaq(this)">
+        <div class="d-faq-q">How is the Quality Bonus calculated?<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+        <div class="d-faq-a">Quality Bonus is based on your average client rating (out of 5.0) and technique score (out of 100). Both scores are averaged and multiplied by your tier multiplier.</div>
+      </div>
+      <div class="d-faq-item" onclick="toggleFaq(this)">
+        <div class="d-faq-q">When does Social Virality Bonus unlock?<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+        <div class="d-faq-a">The Social Virality Bonus unlocks 7 days after a reel is posted, once view and save thresholds are confirmed by the platform analytics team.</div>
+      </div>
+      <div class="d-faq-item" onclick="toggleFaq(this)">
+        <div class="d-faq-q">How do I redeem my bonus?<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+        <div class="d-faq-a">Tap "Redeem" on the Portfolio page. The amount will be transferred to your linked bank account within 2–3 business days.</div>
+      </div>
+      <div class="d-faq-item" onclick="toggleFaq(this)">
+        <div class="d-faq-q">What happens if I change tiers?<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+        <div class="d-faq-a">Tier changes apply from the next calendar month. Your current month's bonuses will be calculated at your existing tier rate.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUALITY BONUS DETAIL -->
+  <div class="drawer" id="drawer-qual">
+    <div class="drawer-handle"></div>
+    <div class="drawer-hdr">
+      <span class="drawer-title">Quality Bonus</span>
+      <div class="drawer-close" onclick="closeAllDrawers()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+    <div class="drawer-body">
+      <div class="d-bonus-stat">
+        <div class="d-bonus-stat-top"><span class="d-bonus-stat-name">This Month</span><span class="d-bonus-stat-amt" id="dq-amt">+₹740</span></div>
+        <div class="d-progress-bar"><div class="d-progress-fill" style="width:74%" id="dq-bar"></div></div>
+        <div class="d-progress-label"><span>₹0</span><span id="dq-max">₹1,000 max</span></div>
+      </div>
+      <div class="d-section-label">Breakdown</div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden">
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Client Rating Avg</span><span class="d-row-val">4.8 / 5.0</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Technique Score</span><span class="d-row-val">92 / 100</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Bookings Assessed</span><span class="d-row-val">12</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Tier Multiplier</span><span class="d-row-val" id="dq-tier">1.2× (Gold)</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Status</span><span class="d-row-val" style="color:var(--green)">✓ Credited Apr 10</span></div>
+      </div>
+      <div class="d-section-label">Monthly Trend</div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden">
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">April 2025</span><span class="d-row-val" id="dq-apr">+₹740</span></div>
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">March 2025</span><span class="d-row-val">+₹680</span></div>
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">February 2025</span><span class="d-row-val">+₹590</span></div>
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">January 2025</span><span class="d-row-val">+₹510</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOCIAL VIRALITY DETAIL -->
+  <div class="drawer" id="drawer-social">
+    <div class="drawer-handle"></div>
+    <div class="drawer-hdr">
+      <span class="drawer-title">Social Virality Bonus</span>
+      <div class="drawer-close" onclick="closeAllDrawers()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+    <div class="drawer-body">
+      <div class="d-bonus-stat" style="border-color:#f4c0a0">
+        <div class="d-bonus-stat-top"><span class="d-bonus-stat-name">This Month</span><span class="d-bonus-stat-amt" id="ds-amt">+₹620</span></div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:#faeeda;padding:5px 12px;border-radius:20px;margin-top:2px">
+          <div style="width:7px;height:7px;border-radius:50%;background:#ba7517"></div>
+          <span style="font-size:11px;font-weight:600;color:#ba7517">Pending · Unlocks in 3 days</span>
+        </div>
+      </div>
+      <div class="d-section-label">Content Stats</div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden">
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Reels Posted</span><span class="d-row-val">4</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Total Views</span><span class="d-row-val">18,400</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Saves</span><span class="d-row-val">1,240</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Shares</span><span class="d-row-val">320</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Best Reel Views</span><span class="d-row-val">8,200</span></div>
+      </div>
+      <div class="d-section-label">Monthly Trend</div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden">
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">April 2025</span><span class="d-row-val" id="ds-apr">+₹620 (pending)</span></div>
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">March 2025</span><span class="d-row-val">+₹540</span></div>
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">February 2025</span><span class="d-row-val">+₹480</span></div>
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">January 2025</span><span class="d-row-val">+₹390</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPEAT CUSTOMER DETAIL -->
+  <div class="drawer" id="drawer-repeat">
+    <div class="drawer-handle"></div>
+    <div class="drawer-hdr">
+      <span class="drawer-title">Repeat Customer Bonus</span>
+      <div class="drawer-close" onclick="closeAllDrawers()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+    <div class="drawer-body">
+      <div class="d-bonus-stat" style="border-color:#b8d98b">
+        <div class="d-bonus-stat-top"><span class="d-bonus-stat-name">This Month</span><span class="d-bonus-stat-amt" id="dr-amt" style="color:var(--green)">+₹170</span></div>
+        <div class="d-progress-bar"><div class="d-progress-fill" style="width:34%;background:var(--green)"></div></div>
+        <div class="d-progress-label"><span>₹0</span><span>₹500 max</span></div>
+      </div>
+      <div class="d-section-label">Breakdown</div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden">
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Referrals This Month</span><span class="d-row-val">3</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Rebookings</span><span class="d-row-val">5</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Client Repeat Rate</span><span class="d-row-val">62%</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Avg Sessions / Client</span><span class="d-row-val">2.4</span></div>
+        <div class="d-row" style="padding:11px 14px"><span class="d-row-key">Status</span><span class="d-row-val" style="color:var(--green)">✓ Credited Apr 12</span></div>
+      </div>
+      <div class="d-section-label">Monthly Trend</div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden">
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">April 2025</span><span class="d-row-val" id="dr-apr">+₹170</span></div>
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">March 2025</span><span class="d-row-val">+₹150</span></div>
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">February 2025</span><span class="d-row-val">+₹120</span></div>
+        <div class="d-row" style="padding:10px 14px"><span class="d-row-key">January 2025</span><span class="d-row-val">+₹100</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG OUT CONFIRMATION -->
+  <div class="logout-confirm" id="logoutConfirm">
+    <div class="logout-sheet">
+      <div class="drawer-handle" style="margin-bottom:14px"></div>
+      <div class="logout-sheet-title">Log Out?</div>
+      <div class="logout-sheet-sub">You'll need to log back in to view your bonus dashboard.</div>
+      <button class="logout-confirm-btn" onclick="showToast('Logged out successfully')">Yes, Log Out</button>
+      <button class="logout-cancel-btn" onclick="closeLogout()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+</div><!-- /phone -->
+
+<script>
+const artists = [
+  { name:"Priya Krishnan", initials:"PK", role:"Senior Artist",  tier:"Gold Tier",     total:4780, redeem:3250, q:740, s:620, r:170, qPct:"+18.5%", sPct:"+26.1%", rPct:"+7.4%",  mb:"+₹1,530", mp:"+24.3%", photo:"https://ui-avatars.com/api/?name=Priya+Krishnan&size=200&background=f4c0d1&color=72243e&bold=true&font-size=0.38&rounded=true" },
+  { name:"Sneha Nair",     initials:"SN", role:"Mid Artist",     tier:"Silver Tier",   total:3920, redeem:2800, q:610, s:480, r:200, qPct:"+15.6%", sPct:"+12.2%", rPct:"+5.1%",  mb:"+₹1,290", mp:"+20.7%", photo:"https://ui-avatars.com/api/?name=Sneha+Nair&size=200&background=c5d8f5&color=185fa5&bold=true&font-size=0.38&rounded=true" },
+  { name:"Divya Menon",    initials:"DM", role:"Senior Artist",  tier:"Platinum Tier", total:5100, redeem:4000, q:900, s:700, r:150, qPct:"+17.6%", sPct:"+13.7%", rPct:"+2.9%",  mb:"+₹1,750", mp:"+28.1%", photo:"https://ui-avatars.com/api/?name=Divya+Menon&size=200&background=c9c6f0&color=534ab7&bold=true&font-size=0.38&rounded=true" },
+  { name:"Anu Pillai",     initials:"AP", role:"Junior Artist",  tier:"Bronze Tier",   total:2650, redeem:1800, q:450, s:310, r:120, qPct:"+17.0%", sPct:"+11.7%", rPct:"+4.5%",  mb:"+₹880",   mp:"+14.1%", photo:"https://ui-avatars.com/api/?name=Anu+Pillai&size=200&background=f5d9b0&color=7a4510&bold=true&font-size=0.38&rounded=true" },
+  { name:"Meera Raj",      initials:"MR", role:"Mid Artist",     tier:"Silver Tier",   total:3300, redeem:2400, q:580, s:420, r:180, qPct:"+17.6%", sPct:"+12.7%", rPct:"+5.5%",  mb:"+₹1,180", mp:"+18.9%", photo:"https://ui-avatars.com/api/?name=Meera+Raj&size=200&background=b8dfa0&color=3b6d11&bold=true&font-size=0.38&rounded=true" }
+];
+
+const pageHeaders = {
+  portfolio:   { title:'Nizan Makeovers', sub:'Bonus Dashboard'        },
+  activity:    { title:'Activity',         sub:'Bonus transactions'     },
+  leaderboard: { title:'Leaderboard',      sub:'Monthly rankings'       },
+  profile:     { title:'My Profile',       sub:'Account & settings'     }
+};
+
+let currentArtist = 0;
+function fmt(n) { return "₹" + n.toLocaleString('en-IN'); }
+
+/* PAGE SWITCH */
+function switchPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('nav-' + page).classList.add('active');
+  const navSvgs = document.querySelectorAll('#nav-' + page + ' svg');
+  navSvgs.forEach(s => s.style.stroke = '#c96fa8');
+  document.querySelectorAll('.nav-item:not(.active) svg').forEach(s => s.style.stroke = '#888');
+  const h = pageHeaders[page];
+  document.getElementById('pageTitle').textContent = h.title;
+  document.getElementById('pageSubtitle').textContent = h.sub;
+  document.querySelector('.content-area').scrollTop = 0;
+  if (page === 'leaderboard') renderLeaderboard();
+}
+
+/* ARTIST SWITCH */
+function switchArtist(idx) {
+  currentArtist = +idx;
+  const a = artists[idx];
+  document.getElementById('avEl').textContent = a.initials;
+  document.getElementById('profAvatar').textContent = a.initials;
+  document.getElementById('nameEl').textContent = a.name;
+  document.getElementById('roleEl').textContent = a.role;
+  document.getElementById('tierEl').textContent = a.tier;
+  document.getElementById('totalEl').textContent = fmt(a.total);
+  document.getElementById('redeemEl').textContent = fmt(a.redeem);
+  document.getElementById('mbEl').textContent = a.mb;
+  document.getElementById('mpEl').textContent = '+' + a.mp;
+  document.getElementById('qAmtEl').textContent = '+' + fmt(a.q);
+  document.getElementById('sAmtEl').textContent = '+' + fmt(a.s);
+  document.getElementById('rAmtEl').textContent = '+' + fmt(a.r);
+  document.getElementById('qPctEl').textContent = a.qPct;
+  document.getElementById('sPctEl').textContent = a.sPct;
+  document.getElementById('rPctEl').textContent = a.rPct;
+  document.getElementById('redeemBtn').textContent = 'Redeem ' + fmt(a.redeem) + ' →';
+  document.getElementById('hhTotal').textContent = fmt(a.total);
+  document.getElementById('hhRedeem').textContent = fmt(a.redeem);
+  document.getElementById('profName').textContent = a.name;
+  document.getElementById('profRoleTxt').textContent = a.role + ' · Nizan Makeovers';
+  document.getElementById('profTier').textContent = a.tier;
+  document.getElementById('profTotal').textContent = fmt(a.total);
+  document.getElementById('profRedeem').textContent = fmt(a.redeem);
+  document.getElementById('profQ').textContent = '+' + fmt(a.q);
+  document.getElementById('profS').textContent = '+' + fmt(a.s);
+  document.getElementById('profR').textContent = '+' + fmt(a.r);
+  document.querySelectorAll('.expand-panel').forEach(p => p.classList.remove('open'));
+  renderHistoryContent(a);
+  renderInlineLB(+idx);
+  const sorted = [...artists].sort((x,y) => y.total - x.total);
+  const rank = sorted.findIndex(x => x.name === a.name) + 1;
+  document.getElementById('profRank').textContent = '#' + rank;
+
+  // update bonus drawer live values
+  const dqAmt = document.getElementById('dq-amt');
+  if (dqAmt) {
+    dqAmt.textContent = '+' + fmt(a.q);
+    document.getElementById('dq-apr').textContent = '+' + fmt(a.q);
+    document.getElementById('dq-tier').textContent = a.tier === 'Platinum Tier' ? '1.5× (Platinum)' : a.tier === 'Gold Tier' ? '1.2× (Gold)' : a.tier === 'Silver Tier' ? '1.0× (Silver)' : '0.8× (Bronze)';
+    document.getElementById('ds-amt').textContent = '+' + fmt(a.s);
+    document.getElementById('ds-apr').textContent = '+' + fmt(a.s) + ' (pending)';
+    document.getElementById('dr-amt').textContent = '+' + fmt(a.r);
+    document.getElementById('dr-apr').textContent = '+' + fmt(a.r);
+    document.getElementById('inp-name').value = a.name;
+  }
+}
+
+/* PORTFOLIO SUB TABS */
+function switchPTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.p-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('p-' + name).classList.add('active');
+}
+
+/* FILTER PILLS */
+function filterPill(el, cat) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('[data-cat]').forEach(w => {
+    w.style.display = (cat === 'All' || w.dataset.cat === cat) ? 'block' : 'none';
+  });
+}
+
+/* EXPAND */
+function toggleExpand(id) {
+  const p = document.getElementById(id);
+  const was = p.classList.contains('open');
+  document.querySelectorAll('.expand-panel').forEach(x => x.classList.remove('open'));
+  if (!was) p.classList.add('open');
+}
+
+/* ACTIVITY FILTER */
+function actFilter(el, type) {
+  document.querySelectorAll('.act-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  const wdPanel = document.getElementById('act-withdraw-panel');
+  const txPanel = document.getElementById('act-txns-panel');
+  if (type === 'wd') {
+    wdPanel.style.display = 'block';
+    txPanel.style.display = 'none';
+  } else {
+    wdPanel.style.display = 'none';
+    txPanel.style.display = 'block';
+    document.querySelectorAll('#act-txns-panel .act-row').forEach(r => {
+      r.style.display = (type === 'all' || r.dataset.type === type) ? 'flex' : 'none';
+    });
+  }
+}
+
+/* HISTORY CONTENT — GPay style, day-level with filter */
+let allHistoryTx = [];
+
+function buildHistoryTx(a) {
+  return [
+    { type:'cr', cat:'quality', icon:'quality', title:'Quality Bonus Credited',  sub:'Client rating & technique score', dateKey:'2025-04-15', dayLabel:'Today · 15 Apr',  month:'April 2025',    amt:a.q,   tag:'Credited' },
+    { type:'cr', cat:'repeat',  icon:'repeat',  title:'Repeat Customer Bonus',   sub:'5 rebookings · 3 referrals',      dateKey:'2025-04-12', dayLabel:'12 Apr',           month:'April 2025',    amt:a.r,   tag:'Credited' },
+    { type:'db', cat:'redeem',  icon:'redeem',  title:'Bonus Redeemed to Bank',  sub:'HDFC Bank ••••4821',              dateKey:'2025-04-10', dayLabel:'10 Apr',           month:'April 2025',    amt:Math.round(a.redeem*0.6), tag:'Debited' },
+    { type:'cr', cat:'social',  icon:'social',  title:'Social Virality Bonus',   sub:'18,400 views · 4 reels',          dateKey:'2025-04-05', dayLabel:'5 Apr',            month:'April 2025',    amt:a.s,   tag:'Pending' },
+    { type:'cr', cat:'quality', icon:'quality', title:'Tier Upgrade Bonus',      sub:'Promoted to ' + a.tier,           dateKey:'2025-04-01', dayLabel:'1 Apr',            month:'April 2025',    amt:200,   tag:'Credited' },
+    { type:'cr', cat:'quality', icon:'quality', title:'Quality Bonus Credited',  sub:'Client rating & technique score', dateKey:'2025-03-14', dayLabel:'14 Mar',           month:'March 2025',    amt:680,   tag:'Credited' },
+    { type:'cr', cat:'social',  icon:'social',  title:'Social Virality Bonus',   sub:'14,200 views · 3 reels',          dateKey:'2025-03-12', dayLabel:'12 Mar',           month:'March 2025',    amt:540,   tag:'Credited' },
+    { type:'cr', cat:'repeat',  icon:'repeat',  title:'Repeat Customer Bonus',   sub:'4 rebookings · 2 referrals',      dateKey:'2025-03-10', dayLabel:'10 Mar',           month:'March 2025',    amt:150,   tag:'Credited' },
+    { type:'db', cat:'redeem',  icon:'redeem',  title:'Bonus Redeemed to Bank',  sub:'HDFC Bank ••••4821',              dateKey:'2025-03-08', dayLabel:'8 Mar',            month:'March 2025',    amt:1800,  tag:'Debited'  },
+    { type:'db', cat:'deduct',  icon:'deduct',  title:'Client Review Penalty',   sub:'1-star complaint reviewed',       dateKey:'2025-03-03', dayLabel:'3 Mar',            month:'March 2025',    amt:120,   tag:'Deducted' },
+    { type:'cr', cat:'quality', icon:'quality', title:'Quality Bonus Credited',  sub:'Client rating & technique score', dateKey:'2025-02-14', dayLabel:'14 Feb',           month:'February 2025', amt:590,   tag:'Credited' },
+    { type:'cr', cat:'social',  icon:'social',  title:'Social Virality Bonus',   sub:'11,800 views · 3 reels',          dateKey:'2025-02-12', dayLabel:'12 Feb',           month:'February 2025', amt:480,   tag:'Credited' },
+    { type:'cr', cat:'repeat',  icon:'repeat',  title:'Repeat Customer Bonus',   sub:'3 rebookings · 1 referral',       dateKey:'2025-02-10', dayLabel:'10 Feb',           month:'February 2025', amt:120,   tag:'Credited' },
+    { type:'db', cat:'redeem',  icon:'redeem',  title:'Bonus Redeemed to Bank',  sub:'HDFC Bank ••••4821',              dateKey:'2025-02-07', dayLabel:'7 Feb',            month:'February 2025', amt:1560,  tag:'Debited'  },
+    { type:'cr', cat:'quality', icon:'quality', title:'Quality Bonus Credited',  sub:'Client rating & technique score', dateKey:'2025-01-14', dayLabel:'14 Jan',           month:'January 2025',  amt:510,   tag:'Credited' },
+    { type:'cr', cat:'social',  icon:'social',  title:'Social Virality Bonus',   sub:'9,400 views · 2 reels',           dateKey:'2025-01-11', dayLabel:'11 Jan',           month:'January 2025',  amt:390,   tag:'Credited' },
+    { type:'cr', cat:'repeat',  icon:'repeat',  title:'Repeat Customer Bonus',   sub:'2 rebookings · 1 referral',       dateKey:'2025-01-09', dayLabel:'9 Jan',            month:'January 2025',  amt:100,   tag:'Credited' },
+    { type:'db', cat:'redeem',  icon:'redeem',  title:'Bonus Redeemed to Bank',  sub:'HDFC Bank ••••4821',              dateKey:'2025-01-06', dayLabel:'6 Jan',            month:'January 2025',  amt:1200,  tag:'Debited'  },
+  ];
+}
+
+const txIconSvg = {
+  quality:`<svg viewBox="0 0 24 24" fill="none" stroke="#534ab7" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`,
+  social: `<svg viewBox="0 0 24 24" fill="none" stroke="#993c1d" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>`,
+  repeat: `<svg viewBox="0 0 24 24" fill="none" stroke="#3b6d11" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14c1.5-.7 3.1-.7 4 0 1.1.7 2 2.3 2 4"/></svg>`,
+  redeem: `<svg viewBox="0 0 24 24" fill="none" stroke="#185fa5" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>`,
+  deduct: `<svg viewBox="0 0 24 24" fill="none" stroke="#a32d2d" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+};
+const txIconBg = { quality:'#eeedfe', social:'#faece7', repeat:'#eaf3de', redeem:'#e6f1fb', deduct:'#fcebeb' };
+const txTagCol = { Credited:'#3a7a10', Pending:'#ba7517', Debited:'#185fa5', Deducted:'#a32d2d' };
+const txTagBg  = { Credited:'#e0f2d0', Pending:'#faeeda', Debited:'#deeaf8', Deducted:'#fcebeb' };
+
+function renderHistoryContent(a) {
+  allHistoryTx = buildHistoryTx(a);
+  renderFilteredHistory('all');
+}
+
+function historyFilter(type, el) {
+  document.querySelectorAll('.hf-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderFilteredHistory(type);
+}
+
+function renderFilteredHistory(type) {
+  let txs = allHistoryTx;
+  if      (type === 'cr')     txs = txs.filter(t => t.type === 'cr');
+  else if (type === 'db')     txs = txs.filter(t => t.type === 'db');
+  else if (type !== 'all')    txs = txs.filter(t => t.cat  === type);
+
+  if (!txs.length) {
+    document.getElementById('historyContent').innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px">No transactions found</div>`;
+    return;
+  }
+
+  // group by individual date
+  const dayMap = {};
+  txs.forEach(t => {
+    if (!dayMap[t.dateKey]) dayMap[t.dateKey] = { label: t.dayLabel, month: t.month, txs: [] };
+    dayMap[t.dateKey].txs.push(t);
+  });
+
+  // group days under months
+  const monthMap = {};
+  Object.entries(dayMap).forEach(([dk, dg]) => {
+    if (!monthMap[dg.month]) monthMap[dg.month] = [];
+    monthMap[dg.month].push({ dateKey: dk, ...dg });
+  });
+
+  document.getElementById('historyContent').innerHTML = Object.entries(monthMap).map(([month, days]) => {
+    const allTx = days.flatMap(d => d.txs);
+    const net = allTx.reduce((s,t) => t.type==='cr' ? s+t.amt : s-t.amt, 0);
+    const netCol = net >= 0 ? 'var(--green)' : '#e24b4a';
+    const netStr = (net >= 0 ? '+' : '') + fmt(net);
+
+    return `
+    <div style="margin-bottom:20px">
+      <!-- Month header -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:0 2px">
+        <span style="font-size:12px;font-weight:700;color:var(--text);letter-spacing:-0.2px">${month}</span>
+        <span style="font-size:11px;font-weight:700;color:${netCol}">${netStr} net</span>
+      </div>
+      <!-- Day groups -->
+      ${days.map(day => `
+      <div style="margin-bottom:10px">
+        <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:6px;padding-left:2px;letter-spacing:0.2px;text-transform:uppercase">${day.label}</div>
+        <div style="background:var(--white);border:0.5px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+          ${day.txs.map((tx, i) => `
+          <div class="htx-row" style="${i < day.txs.length-1 ? 'border-bottom:0.5px solid #f2f2f2' : ''}">
+            <div style="width:44px;height:44px;border-radius:14px;background:${txIconBg[tx.icon]};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <div style="width:22px;height:22px">${txIconSvg[tx.icon]}</div>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${tx.title}</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:2px">${tx.sub}</div>
+              <span style="display:inline-block;margin-top:5px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;background:${txTagBg[tx.tag]};color:${txTagCol[tx.tag]}">${tx.tag}</span>
+            </div>
+            <div style="text-align:right;flex-shrink:0;padding-left:8px">
+              <div style="font-size:15px;font-weight:700;color:${tx.type==='cr'?'var(--green)':'#e24b4a'}">${tx.type==='cr'?'+':'−'}${fmt(tx.amt)}</div>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+/* INLINE LB */
+function renderInlineLB(activeIdx) {
+  const sorted = artists.map((a,i) => ({...a,origIdx:i})).sort((a,b) => b.total-a.total);
+  document.getElementById('plbList').innerHTML = sorted.map((a,i) => `
+    <div class="lb-row ${a.origIdx===activeIdx?'me':''}">
+      <div class="lb-rank ${i===0?'gold':''}">${i+1}</div>
+      <div class="lb-avatar">${a.initials}</div>
+      <div class="lb-info"><div class="lb-name">${a.name}</div><div class="lb-role-text">${a.role}</div></div>
+      <div class="lb-amt">${fmt(a.total)}</div>
+    </div>`).join('');
+}
+
+/* FULL LEADERBOARD */
+function renderLeaderboard() {
+  const sorted = artists.map((a,i) => ({...a,origIdx:i})).sort((a,b) => b.total-a.total);
+  const max = sorted[0].total;
+  const podiumOrder = [sorted[1], sorted[0], sorted[2]];
+  const podiumColors  = ['#9090a0','#ba7517','#8b5c2a'];
+  const podiumBgArr   = ['#f0f0f5','#faeeda','#f5ece3'];
+  const podiumH       = [58, 84, 42];
+  const podiumSz      = [44, 58, 40];
+  const podiumRanks   = ['2','1','3'];
+
+  document.getElementById('podiumEl').innerHTML = podiumOrder.map((a,i) => `
+    <div class="podium-slot">
+      <div class="podium-avatar" style="width:${podiumSz[i]}px;height:${podiumSz[i]}px;font-size:${podiumSz[i]>=54?16:12}px;border-color:${podiumColors[i]}">
+        ${i===1?'<div class="podium-crown">👑</div>':''}
+        ${a.initials}
+      </div>
+      <div class="podium-name">${a.name.split(' ')[0]}</div>
+      <div class="podium-total">${fmt(a.total)}</div>
+      <div class="podium-base" style="width:${podiumSz[i]+30}px;height:${podiumH[i]}px;background:${podiumBgArr[i]};border:0.5px solid ${podiumColors[i]}40;border-radius:10px 10px 0 0">
+        <div class="podium-rank" style="color:${podiumColors[i]}">${podiumRanks[i]}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('lbBars').innerHTML = sorted.map(a => `
+    <div class="lb-bar-row">
+      <div class="lb-bar-name">${a.name.split(' ')[0]}</div>
+      <div class="lb-bar-track"><div class="lb-bar-fill" style="width:${Math.round((a.total/max)*100)}%"></div></div>
+      <div class="lb-bar-val">${fmt(a.total)}</div>
+    </div>`).join('');
+
+  document.getElementById('lbFullList').innerHTML = sorted.map((a,i) => `
+    <div class="lb-row ${a.origIdx===currentArtist?'me':''}">
+      <div class="lb-rank ${i===0?'gold':''}">${i+1}</div>
+      <div class="lb-avatar">${a.initials}</div>
+      <div class="lb-info"><div class="lb-name">${a.name}</div><div class="lb-role-text">${a.role}</div></div>
+      <div class="lb-amt">${fmt(a.total)}</div>
+    </div>`).join('');
+}
+
+// INIT
+switchArtist(0);
+renderLeaderboard();
+
+/* ── DRAWER SYSTEM ── */
+function openDrawer(id) {
+  closeAllDrawers();
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById(id).classList.add('open');
+  document.querySelector('.content-area').style.overflow = 'hidden';
+}
+function closeAllDrawers() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.querySelectorAll('.drawer').forEach(d => d.classList.remove('open'));
+  document.querySelector('.content-area').style.overflow = '';
+}
+
+/* PERSONAL DETAILS */
+function savePersonal() {
+  const name = document.getElementById('inp-name').value.trim();
+  if (name) {
+    document.getElementById('profName').textContent = name;
+    document.getElementById('profAvatar').textContent = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  }
+  closeAllDrawers();
+  showToast('Personal details saved ✓');
+}
+
+/* TOGGLE SWITCH */
+function toggleSwitch(el) {
+  el.classList.toggle('on');
+}
+
+/* FAQ TOGGLE */
+function toggleFaq(item) {
+  const ans = item.querySelector('.d-faq-a');
+  const wasOpen = ans.classList.contains('open');
+  document.querySelectorAll('.d-faq-a').forEach(a => a.classList.remove('open'));
+  if (!wasOpen) ans.classList.add('open');
+}
+
+/* LOGOUT */
+function openLogout() {
+  document.getElementById('logoutConfirm').classList.add('open');
+}
+function closeLogout() {
+  document.getElementById('logoutConfirm').classList.remove('open');
+}
+
+/* TOAST */
+let toastTimer;
+function showToast(msg) {
+  closeAllDrawers();
+  closeLogout();
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+</script>
+</body>
+</html>
